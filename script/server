@@ -1,0 +1,17 @@
+#! /usr/bin/env io
+Lobby doRelativeFile("../app/Init.io")
+
+server := HttpServer clone do (
+    setPort ( 5000 )
+    setHost ( "localhost" )
+
+    renderResponse := method ( request, response,
+      IcisApp handleRequest(request, response)
+    )
+)
+
+server @@start
+
+"Simple Development Server Listening at http://localhost:5000" println
+
+Scheduler waitForCorosToComplete
