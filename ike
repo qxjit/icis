@@ -2,8 +2,12 @@
 
 Importer addSearchPath("build")
 
+UnitTestSuite := TestSuite clone do (
+  System := Object clone do (launchPath := "test")
+)
+
 Ike do (
-  test := method (TestSuite clone setPath("test") run)
-  default := method (test)
+  test := method(UnitTestSuite run)
+  default := method(test)
   run
 )
