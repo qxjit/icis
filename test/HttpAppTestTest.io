@@ -3,19 +3,26 @@ Lobby doRelativeFile("TestHelper.io")
 UnitTest clone do (
   TestApp := Object clone do (
     newSlot("lastRequest", nil)
-    handleRequest := method(request, response, lastRequest = request)
+    newSlot("lastResponse", nil)
+    handleRequest := method(request, response, lastRequest = request; lastResponse = response)
   )
 
   testGetCreatesRequestWithGetMethod := method (
     test := HttpAppTest clone setApplication(TestApp clone)
-    response := test get("/")
+    test get("/")
     assertEquals("GET", test application lastRequest requestMethod)
   )
 
   testGetCreatesRequestWithPathAndUriSet := method (
     test := HttpAppTest clone setApplication(TestApp clone)
-    response := test get("/somePath")
+    test get("/somePath")
     assertEquals("/somePath", test application lastRequest path)
     assertEquals("/somePath", test application lastRequest uri)
+  )
+
+  testGetReturnsResponsePassedToApplication := method (
+    test := HttpAppTest clone setApplication(TestApp clone)
+    response := test get("/")
+    assertEquals(test application lastResponse, response)
   )
 )

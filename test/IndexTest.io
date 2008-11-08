@@ -1,6 +1,6 @@
-UnitTest clone do (
+IcisAppTest clone do (
   testIndexDisplaysBanner := method (
-    #response = get "/"
-    #assertEquals(true, response matchesRegex("<h1>Wecome to Icis</h1>"))
+    response := get("/")
+    assertEquals(true, response body matchesRegex(".*<h1>Welcome to Icis</h1>.*"))
   )
 )
