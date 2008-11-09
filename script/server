@@ -10,8 +10,6 @@ server := HttpServer clone do (
     )
 )
 
-server @@start
-
+result := server @start
 "Simple Development Server Listening at http://localhost:5000" println
-
-Scheduler waitForCorosToComplete
+result print
