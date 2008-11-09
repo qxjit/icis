@@ -17,7 +17,6 @@ UnitTest clone do (
     test := HttpAppTest clone setApplication(TestApp clone)
     test get("/somePath")
     assertEquals("/somePath", test application lastRequest path)
-    assertEquals("/somePath", test application lastRequest uri)
   )
 
   testGetReturnsResponsePassedToApplication := method (
