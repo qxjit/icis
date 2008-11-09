@@ -1,5 +1,6 @@
 IcisApp := Object clone do (
   handleRequest := method(request, response,
-    response body = "<html><h1>Welcome to Icis</h1></html>"
+    controller := if (request uri == "/", IndexController, AdminController)
+    controller handleRequest(request, response)
   )
 )

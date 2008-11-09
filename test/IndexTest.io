@@ -1,3 +1,5 @@
+Lobby doRelativeFile("TestHelper.io")
+
 IcisAppTest clone do (
   testIndexDisplaysBanner := method (
     response := get("/")
