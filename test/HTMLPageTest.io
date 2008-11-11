@@ -7,7 +7,24 @@ UnitTest clone do (
     )
 
     assertEquals("foo", page at("foo") attributes at("id"))
-  )  
+  )
+
+  testPageConLocateElementsByArbitraryAttribute := method (
+    page := HTMLPage parse(
+      "<body><div class='foo' id='bar'/><div class='foo' id='baz'/></body>"
+    )
+    
+    expectedIds := List clone append("bar") append("baz")
+    assertEquals(expectedIds, 
+                 page findElements(class == "foo") map(attributes at("id")))
+  )
+
+  testPageConLocateWithExpressionToBeEvaluatedInThisContext := method (
+    page := HTMLPage parse("<div class='foo'/>")
+    localVariable := "foo"
+    assertEquals(1, page findElements(class == localVariable) size)
+    assertFalse(hasLocalSlot("class"))
+  )
 
   testTextFieldsWithinAFormCanBeFilledOutForSubmission := method (
     form := HTMLPage parse("""
