@@ -59,7 +59,12 @@ UnitTest clone do (
   )
 
   testRequestMethodOnFormReturnsMethodAttribute := method (
-    form := HTMLPage parse("<form id='id' method='get'></form>") at("id")
+    form := HTMLPage parse("<form id='id' method='post'></form>") at("id")
+    assertEquals("POST", form requestMethod)
+  )
+
+  testRequestMethodOnFormDefaultsToGet := method (
+    form := HTMLPage parse("<form id='id'></form>") at("id")
     assertEquals("GET", form requestMethod)
   )
 )

@@ -9,9 +9,11 @@ HTMLPage := SGMLElement clone do (
   allInputs     := method(elementsWithName("input"))
   inputName     := method(attributes at("name"))
   action        := method(attributes at("action"))
-  requestMethod := method(attributes at("method") asMutable uppercase)
   set           := method(value, self value := value)
   value         := ""
+  requestMethod := method(
+    attributes at("method") ifNilEval("GET") asMutable uppercase
+  )
 
   input := method(name, 
     input := allInputs detect(inputName == name)
