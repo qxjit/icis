@@ -6,15 +6,27 @@ IcisAppTest clone do (
     assertEquals("Welcome to Icis - Admin", response page at("title") allText)
   )
 
-  testIndexAfterAddingProjectDisplaysProjectWithName := method (
+  testIndexBeforeAddingProjectDisplaysNoProjects := method (
+    response := get("/admin")
+    projects := response page findElements(class == "project")
+    assertEquals(0, projects size)
+  )
+
+  testIndexAfterAddingProjectsDisplaysProjectsWithNames := method (
     response := get("/admin")
     projectForm := response page at("projectForm")
-    projectForm input("name") set("My Project Name")
+
+    projectForm input("name") set("Project 1")
     submit(projectForm)
+
+    projectForm input("name") set("Project 2")
+    submit(projectForm)
+
     response := get("/admin")
 
     projects := response page findElements(class == "project")
-    assertEquals(1, projects size)
-    assertEquals("My Project Name", projects first allText)
+    assertEquals(2, projects size)
+    assertEquals("Project 1", projects first allText)
+    assertEquals("Project 2", projects last allText)
   )
 )

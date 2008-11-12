@@ -1,8 +1,9 @@
 AdminController := Object clone do (
-  projectName := nil
+  projects := List clone
+
   handleRequest := method(request, response,
     if (request requestMethod == "POST", 
-      projectName = request parameters at("name")
+      projects append(request parameters at("name"))
     )
 
     response body = """
@@ -13,9 +14,13 @@ AdminController := Object clone do (
       Name: <input type="text" name="name"/>
       <input type="submit" name="submit" value="Create Project"/>
     </form>
-    <div class="project">#{projectName}</div>
+    #{projectDivs}
   </body>
 </html>
 """ interpolate
+  )
+
+  projectDivs := method(
+    projects map(name, "<div class='project'>#{name}</div>" interpolate) join
   )
 )
