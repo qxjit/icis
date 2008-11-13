@@ -1,5 +1,5 @@
-IndexController := Object clone do (
+IndexController := Controller clone do (
   handleRequest := method(request, response,
-    response body = "<html><h1>Welcome to Icis</h1></html>"
+    response body = renderer render("index.html")
   )
 )

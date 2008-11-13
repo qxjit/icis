@@ -1,4 +1,4 @@
-AdminController := Object clone do (
+AdminController := Controller clone do (
   projects := List clone
 
   handleRequest := method(request, response,
@@ -6,21 +6,6 @@ AdminController := Object clone do (
       projects append(request parameters at("name"))
     )
 
-    response body = """
-<html>
-  <body>
-    <h1 id="title">Welcome to Icis - Admin</h1>
-    <form id="projectForm" method="post">
-      Name: <input type="text" name="name"/>
-      <input type="submit" name="submit" value="Create Project"/>
-    </form>
-    #{projectDivs}
-  </body>
-</html>
-""" interpolate
-  )
-
-  projectDivs := method(
-    projects map(name, "<div class='project'>#{name}</div>" interpolate) join
+    response body = renderer render("admin.html")
   )
 )
