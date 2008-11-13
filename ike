@@ -7,6 +7,7 @@ UnitTestSuite := TestSuite clone do (
 )
 
 Ike do (
+  verbose := method(UnitTestSuite verbose := UnitTest verbose := method(s, s println))
   test := method(UnitTestSuite run)
   default := method(test)
   run
