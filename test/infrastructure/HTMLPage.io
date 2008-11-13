@@ -30,12 +30,13 @@ HTMLPage := SGMLElement clone do (
   )
 
   findElementsByPredicateInContext := method(predicate, context,
-    elements       := call evalArgAt(2) ifNilEval(List clone)
+    elements := call evalArgAt(2) ifNilEval(List clone)
 
-    predicateContext := context clone
-    predicateContext setSlot(predicate name, attributes at(predicate name))
+    if(attributes hasKey(predicate name) and 
+       predicate doInContext(attributes asObject, context), 
+      elements append(self)
+    )
 
-    if(predicateContext doMessage(predicate), elements append(self))
     subitems foreach(
       findElementsByPredicateInContext(predicate, context, elements)
     )
