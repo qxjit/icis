@@ -9,7 +9,7 @@ UnitTest clone do (
     assertEquals("foo", page at("foo") attributes at("id"))
   )
 
-  testPageConLocateElementsByArbitraryAttribute := method (
+  testPageCanLocateElementsByArbitraryAttribute := method (
     page := HTMLPage parse(
       "<body><div class='foo' id='bar'/><div class='foo' id='baz'/></body>"
     )
@@ -19,7 +19,7 @@ UnitTest clone do (
                  page findElements(class == "foo") map(attributes at("id")))
   )
 
-  testPageConLocateWithExpressionToBeEvaluatedInThisContext := method (
+  testPageCanLocateWithExpressionToBeEvaluatedInThisContext := method (
     page := HTMLPage parse("<div class='foo'/>")
     localVariable := "foo"
     assertEquals(1, page findElements(class == localVariable) size)
