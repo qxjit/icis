@@ -1,5 +1,10 @@
 AdminController := Controller clone do (
-  projects := List clone
+  projects := method(
+    if(application projectDirectory exists,
+      application projectDirectory directories map(name),
+      list()
+    )
+  )
 
   handleRequest := method(request, response,
     if (request requestMethod == "POST", 
