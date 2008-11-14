@@ -1,0 +1,20 @@
+Admin
+x * Add a project
+  * Remove a project
+  * Remember projects across restarts 
+  * Configure a build task
+
+Git Support
+  * Clone repository on add
+  * Delete repository on remove
+  * Check for changes and pull
+
+Building
+  * Run project build task after pull
+  * Report successful run of build task
+  * Report unsuccessful run of build task
+  * Reload view periodically to get new status
+
+Infrastructure
+  * Return error 400 for bad url
+  * Return error 500 if there is an error
