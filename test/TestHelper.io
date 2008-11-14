@@ -9,8 +9,10 @@ hasSlot("TestDirectory") ifFalse(
     Directory := Object clone do (
       recursivelyRemove := method (
         name in(list(".", "..")) ifFalse(
-          items foreach(testExtras recursivelyRemove)
-          remove
+          exists ifTrue(
+            items foreach(testExtras recursivelyRemove)
+            remove
+          )
         )
       )
     )
