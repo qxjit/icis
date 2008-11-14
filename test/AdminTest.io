@@ -13,13 +13,18 @@ IcisAppTest clone do (
   )
 
   testIndexAfterAddingProjectsDisplaysProjectsWithNames := method (
+    repo := GitRepository at(TempDirectory testDir directoryNamed("repo"))
+    repo gitInit
+
     response := get("/admin")
     projectForm := response page at("projectForm")
 
     projectForm input("name") set("Project 1")
+    projectForm input("uri") set(repo directory path)
     submit(projectForm)
 
     projectForm input("name") set("Project 2")
+    projectForm input("uri") set(repo directory path)
     submit(projectForm)
 
     response := get("/admin")
@@ -28,5 +33,8 @@ IcisAppTest clone do (
     assertEquals(2, projects size)
     assertEquals("Project 1", projects first allText)
     assertEquals("Project 2", projects last allText)
+
+    assertEquals(repo directory path, 
+                 GitRepository at(application projectDirectory directoryNamed("Project 1")) originUrl)
   )
 )

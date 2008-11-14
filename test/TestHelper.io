@@ -1,28 +1,18 @@
 hasSlot("TestDirectory") ifFalse(
   Lobby doRelativeFile("../app/Init.io")
+
   TestDirectory := File clone setPath(Path thisSourceFilePath) containingDirectory
-  Importer addSearchPath(TestDirectory directoryNamed("infrastructure") path)
-  TempDirectory := TestDirectory directoryNamed("tmp") create
+  InfrastructureDirectory := TestDirectory directoryNamed("infrastructure")
+  Importer addSearchPath(InfrastructureDirectory path)
+  Lobby doFile(InfrastructureDirectory fileNamed("TestExtras.io") path)
+
+  TempDirectory := TestDirectory directoryNamed("tmp") do (
+    testFile := method(fileNamed(call sender call message name))
+    testDir := method(directoryNamed(call sender call message name))
+  )
+
+  TempDirectory TestExtras recursivelyRemove
+  TempDirectory create
+
   Regex # force Regex to load
-
-  TestExtras := Object clone do (
-    Directory := Object clone do (
-      recursivelyRemove := method (
-        name in(list(".", "..")) ifFalse(
-          exists ifTrue(
-            items foreach(testExtras recursivelyRemove)
-            remove
-          )
-        )
-      )
-    )
-    
-    File := Object clone do (
-      recursivelyRemove := method(remove)
-    )
-  )
-
-  Object testExtras := method(
-    self clone do (appendProto(TestExtras getSlot(type)))
-  )
 )

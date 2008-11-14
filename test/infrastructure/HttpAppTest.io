@@ -1,6 +1,11 @@
 HttpAppTest := UnitTest clone do (
   newSlot("application", nil)
 
+  setUp := method(
+    resend
+    setApplication(application clone)
+  )
+
   get := method(path, 
     request  := TestRequest clone setRequestMethod("GET") setPath(path)
     response := TestResponse clone

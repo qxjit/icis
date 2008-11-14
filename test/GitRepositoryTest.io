@@ -2,18 +2,14 @@ Lobby doRelativeFile("TestHelper.io")
 
 UnitTest clone do (
   testInitializingARepositoryCreatesDirectoryAndInitsRepoInIt := method(
-    directory := TempDirectory directoryNamed(call message name)
-    directory testExtras recursivelyRemove
-    GitRepository at(directory) gitInit
-    assertTrue(directory exists)
-    assertTrue(directory directoryNamed(".git") exists)
+    GitRepository at(TempDirectory testDir) gitInit
+    assertTrue(TempDirectory testDir exists)
+    assertTrue(TempDirectory testDir directoryNamed(".git") exists)
   )
 
   testCloningAGitRepositoryCreatesDirectoryAsACloneOfAnotherRepo := method(
-    testDir := TempDirectory directoryNamed(call message name)
-    testDir testExtras recursivelyRemove
-    masterRepo := GitRepository at(testDir directoryNamed("master"))
-    cloneRepo := GitRepository at(testDir directoryNamed("clone"))
+    masterRepo := GitRepository at(TempDirectory testDir directoryNamed("master repo"))
+    cloneRepo := GitRepository at(TempDirectory testDir directoryNamed("clone repo"))
 
     masterRepo gitInit
     # Git doesn't like to clone without a commit
@@ -21,7 +17,14 @@ UnitTest clone do (
     cloneRepo gitClone(masterRepo directory path)
 
     assertTrue(cloneRepo directory exists)
-    assertEquals(list("origin/HEAD", "origin/master"),
-                 File clone popen("cd " .. cloneRepo directory path .. " && git branch -r") readLines map(strip))
+    assertEquals(masterRepo directory path, cloneRepo originUrl)
+  )
+
+  testGitDoRaisesExceptionIfCommandFails := method(
+    repo := GitRepository at(TempDirectory testDir)
+    repo gitInit
+
+    # pull will fail since there is no origin
+    assertRaisesException(repo gitDo(repo directory, "pull"))
   )
 )
