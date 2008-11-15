@@ -12,6 +12,7 @@ x * Clone repository on add
   * Check for changes and pull
 
 Building
+  * Run project build task immediately after add
   * Run project build task after pull
   * Report successful run of build task
   * Report unsuccessful run of build task
