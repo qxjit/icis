@@ -1,17 +1,16 @@
 AdminController := Controller clone do (
-  projects := method(
-    if(application projectDirectory exists,
-      application projectDirectory directories map(name),
-      list()
-    )
-  )
+  projects := method(objStore projects)
 
   handleRequest := method(request, response,
+    application projectDirectory createIfAbsent
+
     if (request requestMethod == "POST", 
-      projects append(name := request parameters at("name"))
-      application projectDirectory createIfAbsent
-      newRepo := GitRepository at(application projectDirectory directoryNamed(name))
-      newRepo gitClone(request parameters at("uri"))
+      project := Project clone setName(request parameters at("name")) \
+                               setUrl(request parameters at("uri"))
+
+      newRepo := GitRepository at(application projectDirectory directoryNamed(project name))
+      newRepo gitClone(project url)
+      objStore save(project)
     )
 
     response body = renderer render("admin.html")

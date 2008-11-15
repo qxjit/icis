@@ -13,8 +13,8 @@ IcisAppTest clone do (
   )
 
   testIndexWithProjectsAlreadyAddedDisplaysProjectsWithNames := method (
-    GitRepository at(application projectDirectory directoryNamed("Project 1")) gitInit
-    GitRepository at(application projectDirectory directoryNamed("Project 2")) gitInit
+    application objStore save(Project clone setName("Project 1"))
+    application objStore save(Project clone setName("Project 2"))
 
     response := get("/admin")
 

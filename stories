@@ -5,6 +5,7 @@ x * Remember projects across restarts
   * Configure a build task
   * Display origin url for existing projects
   * Limit admin access based on username/password
+  * Edit an existing project
 
 Git Support
 x * Clone repository on add
