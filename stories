@@ -18,6 +18,7 @@ Building
   * Report successful run of build task
   * Report unsuccessful run of build task
   * Reload view periodically to get new status
+  * View results of past builds
 
 Infrastructure
   * Return error 400 for bad url

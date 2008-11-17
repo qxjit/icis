@@ -1,16 +1,11 @@
-Build := Object clone do(
-  newSlot("command")
+Build := StoredObject clone do(
+  storedFields("status", "projectId")
 
-  start := method(
-    self systemCall := SystemCall clone
-    commandAndArgs := command split(" ")
-    systemCall setCommand(commandAndArgs first)
-    systemCall setArguments(commandAndArgs slice(1))
-    systemCall @@run
-    yield
-    self
+  Status := Object clone do (
+    Running := "Running"
+    Failed := "Failed"
+    Succeeded := "Succeeded"
   )
 
-  isRunning := method(systemCall isRunning)
-  isSuccessful := method(isRunning not and systemCall returnCode == 0)
+  setProject := method(project, setProjectId(project id))
 )

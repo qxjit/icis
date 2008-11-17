@@ -1,16 +1,20 @@
 BuildProcess := Object clone do(
   newSlot("command")
+  newSlot("started", false)
+  newSlot("file", nil)
+  newSlot("returnCode", nil)
 
   start := method(
     self systemCall := SystemCall clone
-    commandAndArgs := command split(" ")
-    systemCall setCommand(commandAndArgs first)
-    systemCall setArguments(commandAndArgs slice(1))
-    systemCall @@run
-    yield
-    self
+    setFile(File clone setPath(command)) @@build
+    setStarted(true)
   )
 
-  isRunning := method(systemCall isRunning)
-  isSuccessful := method(isRunning not and systemCall returnCode == 0)
+  build := method(
+    file popen
+    file close
+  )
+
+  isRunning := method(started and file exitStatus isNil)
+  isSuccessful := method(isRunning not and file exitStatus == 0)
 )

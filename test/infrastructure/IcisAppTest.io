@@ -4,4 +4,6 @@ IcisAppTest := HttpAppTest clone do (
     testName := call sender n # UnitTest doesn't instantiate a separate instance for each test run...
     setApplication(IcisApp clone setProjectDirectory(TempDirectory directoryNamed(testName) directoryNamed("projects")))
   )
+
+  objStore := method(application objStore)
 )

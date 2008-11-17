@@ -22,7 +22,7 @@ ObjectStore := Object clone do (
     db exec("""insert into #{tableName} (#{columns})
                values (#{values})""" interpolate)
 
-    object id := db lastInsertRowId
+    object id := db lastInsertRowId asString
     db close
   )
 
@@ -40,10 +40,7 @@ ObjectStore := Object clone do (
 
     objects := rows map(row,
       obj := Lobby doString(inflector typeName) clone
-      row foreach(name, value, 
-        (name == "id") ifTrue(value := value asNumber)
-        obj setSlot(name, value)
-      )
+      row foreach(name, value, obj setSlot(name, value))
       obj
     )
 

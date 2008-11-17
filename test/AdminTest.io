@@ -13,8 +13,8 @@ IcisAppTest clone do (
   )
 
   testIndexWithProjectsAlreadyAddedDisplaysProjectsWithNames := method (
-    application objStore save(Project clone setName("Project 1"))
-    application objStore save(Project clone setName("Project 2"))
+    objStore save(Project clone setName("Project 1"))
+    objStore save(Project clone setName("Project 2"))
 
     response := get("/admin")
 

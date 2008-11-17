@@ -1,6 +1,5 @@
-Project := Object clone do (
-  newSlot("name")
-  newSlot("url")
+Project := StoredObject clone do (
+  storedFields("name", "url", "buildCommand")
 
-  savedSlots := list("name", "url")
+  newBuild := method(Build clone setProject(self))
 )

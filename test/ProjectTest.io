@@ -1,12 +1,12 @@
 Lobby doRelativeFile("TestHelper.io")
 
 UnitTest clone do (
-  testSavedProjectsFound := method(
+  testProjectCreateNewBuildsWithItsId := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    
+    project := Project clone
+    objStore save(project)
 
-    objStore save(Project clone setName("Project 1") setUrl("/some/url1"))
-
-    assertEquals(list("Project 1"), objStore projects map(name))
-    assertEquals(list("/some/url1"), objStore projects map(url))
+    assertEquals(project id, project newBuild projectId)
   )
 )
