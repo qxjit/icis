@@ -10,6 +10,7 @@ server := HttpServer clone do (
     )
 )
 
-result := server @start
+server @start
 "Simple Development Server Listening at http://localhost:5000" println
-result print
+
+BuildManager clone setApplication(IcisApp) run

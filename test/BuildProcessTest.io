@@ -17,8 +17,14 @@ UnitTest clone do (
   )
 
   testBuildProcessIsNotSuccessfulWhenCommandFails := method(
-    build := BuildProcess clone setCommand("sleep 0") start
     build := BuildProcess clone setCommand("test -f bogus") start
+    assertFalse(build isSuccessful)
+    waitFor(build isRunning not)
+    assertFalse(build isSuccessful)
+  )
+
+  testBuildProcessIsNotSuccessfulIfCommandIsNil := method(
+    build := BuildProcess clone setCommand(nil) start
     assertFalse(build isSuccessful)
     waitFor(build isRunning not)
     assertFalse(build isSuccessful)

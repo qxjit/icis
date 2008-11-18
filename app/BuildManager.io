@@ -11,5 +11,10 @@ BuildManager := Object clone do (
     )
   )
 
+  run := method(loop(
+    wait(1)
+    updateProcesses
+  ))
+
   objStore := method(application objStore)
 )

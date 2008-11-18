@@ -6,7 +6,8 @@ AdminController := Controller clone do (
 
     if (request requestMethod == "POST", 
       project := Project clone setName(request parameters at("name")) \
-                               setUrl(request parameters at("uri"))
+                               setUrl(request parameters at("uri")) \
+                               setBuildCommand(request parameters at("buildCommand"))
 
       newRepo := GitRepository at(application projectDirectory directoryNamed(project name))
       newRepo gitClone(project url)
