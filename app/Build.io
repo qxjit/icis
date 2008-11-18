@@ -7,5 +7,9 @@ Build := StoredObject clone do(
     Succeeded := "Succeeded"
   )
 
+  markAsFailed := method(setStatus(Status Failed))
+  markAsRunning := method(setStatus(Status Running))
+  markAsSucceeded := method(setStatus(Status Succeeded))
+
   setProject := method(project, setProjectId(project id))
 )

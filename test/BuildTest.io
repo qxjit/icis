@@ -7,4 +7,11 @@ UnitTest clone do (
     build := Build clone setProject(project)
     assertEquals("10", build projectId)
   )
+
+  testBuildCanBeMarkedAsInStatuses := method(
+    Build Status slotNames remove("type") foreach (status,
+      assertEquals(Build Status getSlot(status),
+                   Build clone doString("markAs" .. status) status)
+    )
+  )
 )
