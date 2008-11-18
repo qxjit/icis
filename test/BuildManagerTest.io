@@ -12,11 +12,13 @@ IcisAppTest clone do (
     start := method(setIsRunning(true))
   )
 
-  setUp := method(resend; FakeBuildProcess instances empty)
+  setUp := method(
+    resend
+    FakeBuildProcess instances empty
+    self manager := BuildManager clone setApplication(application) setBuildProcessProto(FakeBuildProcess)
+  )
 
   testBuildManagerStartsBuildProcessesForAnyProjectsWithoutABuild := method (
-    manager := BuildManager clone setApplication(application) setBuildProcessProto(FakeBuildProcess)
-
     objStore save(Project clone setBuildCommand("doit"))
 
     manager updateProcesses
@@ -27,13 +29,21 @@ IcisAppTest clone do (
   )
 
   testBuildManagerDoesntStartBuildProcessForProjectsWithABuild := method (
-    manager := BuildManager clone setApplication(application) setBuildProcessProto(FakeBuildProcess)
-
-    objStore save(project := Project clone setBuildCommand("doit"))
+    objStore save(project := Project clone)
     objStore save(project newBuild)
 
     manager updateProcesses
 
     assertEquals(0, FakeBuildProcess instances size)
+  )
+
+  testBuildManagerCreatesABuildInRunningStatusStartingABuild := method (
+    objStore save(project := Project clone)
+
+    manager updateProcesses
+
+    assertEquals(1, objStore builds size)
+    assertEquals(project id, objStore builds first projectId)
+    assertEquals(Build Status Running, objStore builds first status)
   )
 )
