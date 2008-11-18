@@ -14,10 +14,23 @@ UnitTest clone do (
     masterRepo gitInit
     # Git doesn't like to clone without a commit
     masterRepo gitDo(masterRepo directory, "commit", "--allow-empty", "-m", "test")
-    cloneRepo gitClone(masterRepo directory path)
 
+    assertEquals(cloneRepo, cloneRepo gitClone(masterRepo directory path))
     assertTrue(cloneRepo directory exists)
     assertEquals(masterRepo directory path, cloneRepo originUrl)
+  )
+
+  testCloningAGitRepositoryTwiceIsHarmless := method(
+    masterRepo := GitRepository at(TempDirectory testDir directoryNamed("master repo"))
+    cloneRepo := GitRepository at(TempDirectory testDir directoryNamed("clone repo"))
+
+    masterRepo gitInit
+    # Git doesn't like to clone without a commit
+    masterRepo gitDo(masterRepo directory, "commit", "--allow-empty", "-m", "test")
+
+    2 repeat(
+      assertEquals(cloneRepo, cloneRepo gitClone(masterRepo directory path))
+    )
   )
 
   testGitDoRaisesExceptionIfCommandFails := method(

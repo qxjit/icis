@@ -9,6 +9,7 @@ GitRepository := Object clone do (
   )
 
   gitClone := method(masterUri,
+    if(directory exists, return self)
     gitDo(directory parentDirectory, "clone", masterUri, directory name)
   )
 
@@ -28,6 +29,8 @@ GitRepository := Object clone do (
     command := "cd '#{directory path}' && git #{gitCommand} #{argumentsString} > /dev/null 2>&1" interpolate
     logCommand(command)
     (System system(command) == 0) ifFalse(Exception raise(command .. " failed"))
+
+    self
   )
 
   logCommand := method(nil)

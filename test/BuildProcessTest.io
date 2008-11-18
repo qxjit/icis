@@ -29,7 +29,19 @@ UnitTest clone do (
     waitFor(build isRunning not)
     assertFalse(build isSuccessful)
   )
-  
+
+  testBuildProcessCollectsOutputFromRun := method(
+    build := BuildProcess clone setCommand("echo hello") start
+    waitFor(build isRunning not)
+    assertEquals("hello\n", build output)
+  )
+
+  testBuildProcessRunsInRequestedDirectory := method(
+    build := BuildProcess clone setDirectory(TempDirectory) setCommand("pwd") start
+    waitFor(build isRunning not)
+    assertEquals(TempDirectory path .. "\n", build output)
+  )
+
   waitFor := method(
     startTime := Date now
     while(startTime secondsSinceNow < 1 and call evalArgAt(0) not, yield)

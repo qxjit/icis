@@ -25,39 +25,30 @@ IcisAppTest clone do (
   )
 
   testIndexAfterAddingProjectsDisplaysProjectsWithNames := method (
-    repo := GitRepository at(TempDirectory testDir directoryNamed("repo"))
-    repo gitInit
-
     response := get("/admin")
     projectForm := response page at("projectForm")
 
     projectForm input("name") set("Project 1")
-    projectForm input("uri") set(repo directory path)
     submit(projectForm)
 
     response := get("/admin")
 
     projects := response page findElements(class == "project")
     assertEquals(1, projects size)
-    assertEquals(repo directory path, 
-                 GitRepository at(application projectDirectory directoryNamed("Project 1")) originUrl)
   )
 
   testAddingProjectCreatesProjectWithAllFields := method (
-    repo := GitRepository at(TempDirectory testDir directoryNamed("repo"))
-    repo gitInit
-
     response := get("/admin")
     projectForm := response page at("projectForm")
 
     projectForm input("name") set("Project 1")
-    projectForm input("uri") set(repo directory path)
+    projectForm input("uri") set("repopath")
     projectForm input("buildCommand") set("doit")
     submit(projectForm)
 
     assertEquals(1, objStore projects size)
     assertEquals("Project 1", objStore projects first name)
-    assertEquals(repo directory path, objStore projects first url)
+    assertEquals("repopath", objStore projects first url)
     assertEquals("doit", objStore projects first buildCommand)
   )
 )

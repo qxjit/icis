@@ -2,18 +2,18 @@ Admin
 x * Add a project
   * Remove a project
 x * Remember projects across restarts 
-  * Configure a build task
+x * Configure a build task
   * Display origin url for existing projects
   * Limit admin access based on username/password
   * Edit an existing project
 
 Git Support
-x * Clone repository on add
+  * Clone repository on add
   * Delete repository on remove
   * Check for changes and pull
 
 Building
-  * Run project build task immediately after add
+x * Run project build task immediately after add
   * Run project build task after pull
   * Report successful run of build task
   * Report unsuccessful run of build task
