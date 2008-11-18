@@ -1,1 +1,4 @@
-<div class='project'>#{project name}</div>
+<div class='project'>
+  #{project name}
+  #{buildsFor(project) map(build, renderer render("build.html")) join} 
+</div>

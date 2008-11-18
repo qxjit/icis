@@ -1,5 +1,20 @@
 <html>
+  <head>
+    <style type="text/css">
+      .project {
+        border: 2px solid green;
+        padding: 2px;
+        width: 500px;
+      }
+
+      .build {
+        margin-left: 10px;
+      }
+    </style>
+
+  </head>
   <body>
     <h1 id="title">Welcome to Icis</h1>
+    #{projects map(project, renderer render("project.html")) join} 
   </body>
 </html>
