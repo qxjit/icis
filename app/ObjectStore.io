@@ -50,6 +50,8 @@ ObjectStore := Object clone do (
 
     if (singleItem := (inflector singleItemQueryName == call message name),
       sql = sql .. " where id = #{call evalArgAt(0)}"
+    ,
+      if(call hasArgs, sql = sql .. " where #{call evalArgAt(0)}")
     )
 
     db open
@@ -57,16 +59,14 @@ ObjectStore := Object clone do (
     db close
 
     objects := rows map(row,
-      obj := Lobby doString(inflector typeName) clone
-      row foreach(name, value, obj setSlot(name, value))
-
-      if(cachedObject := getCachedObject(inflector cacheKey(obj id)),
-        obj = cachedObject
+      if(cachedObject := getCachedObject(inflector cacheKey(row at("id"))),
+        cachedObject
       ,
+        obj := Lobby doString(inflector typeName) clone
+        row foreach(name, value, obj setSlot(name, value))
         putObjectInCache(inflector cacheKey(obj id), obj)
+        obj
       )
-
-      obj
     )
 
     if (singleItem, objects first, objects)

@@ -45,11 +45,14 @@ UnitTest clone do (
   )
 
   testRaisesAnErrorIfTypeCannotBeFoundForTable := method(
-    objStore := ObjectStore clone setPath(TempDirectory testDir fileNamed("test") path)
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
     otherType := ObjectStoreTestObject clone
     otherType type := "FakeType"
 
     objStore save(otherType)
+
+    # reinitialize the object store to get a fresh state
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
     assertRaisesException(objStore fakeTypes)
   )
@@ -101,5 +104,15 @@ UnitTest clone do (
     objStore save(obj)
 
     assertEquals(obj uniqueId, objStore objectStoreTestObject(obj id) uniqueId)
+  )
+
+  testObjectListsCanBeFoundWithEquality := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    objStore save(ObjectStoreTestObject clone setSomeField("foo"))
+    objStore save(ObjectStoreTestObject clone setSomeField("bar"))
+
+    assertEquals(list("foo"), 
+                 objStore objectStoreTestObjects("someField = 'foo'") map(someField))
   )
 )
