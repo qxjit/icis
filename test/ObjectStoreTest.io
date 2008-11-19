@@ -1,52 +1,48 @@
 Lobby doRelativeFile("TestHelper.io")
 
-ObjectStoreTestObject := Object clone do (
-  newSlot("someField"); savedSlots := list("someField")
-)
-
 UnitTest clone do (
   testInsertedObjectsCanBeFoundById := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore save(obj)
 
-    assertEquals(obj id, objStore objectStoreTestObject(obj id) id)
-    assertEquals("value", objStore objectStoreTestObject(obj id) someField)
+    assertEquals(obj id, objStore lineItem(obj id) id)
+    assertEquals("value", objStore lineItem(obj id) name)
   )
 
   testInsertedObjectsCanBeFoundByList := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    objStore save(ObjectStoreTestObject clone setSomeField("value 1"))
-    objStore save(ObjectStoreTestObject clone setSomeField("value 2"))
+    objStore save(LineItem clone setName("value 1"))
+    objStore save(LineItem clone setName("value 2"))
 
     assertEquals(list("value 1", "value 2"), 
-                 objStore objectStoreTestObjects map(someField))
+                 objStore lineItems map(name))
   )
 
   testInsertedObjectsCanBeFoundInAnotherObjectStoreWithTheSamePath := method(
     objStore1 := ObjectStore clone setPath(TempDirectory testFile path)
     objStore2 := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore1 save(obj)
 
-    assertEquals("value", objStore2 objectStoreTestObject(obj id) someField)
+    assertEquals("value", objStore2 lineItem(obj id) name)
   )
 
   testAndParentDirectoriesOnPathAreCreatedAsNeeded := method(
     objStore := ObjectStore clone setPath(TempDirectory testDir fileNamed("test") path)
     assertFalse(File with(objStore path) containingDirectory exists)
 
-    objStore save(ObjectStoreTestObject clone)
+    objStore save(LineItem clone)
     
-    assertEquals(1, objStore objectStoreTestObjects size)
+    assertEquals(1, objStore lineItems size)
   )
 
   testRaisesAnErrorIfTypeCannotBeFoundForTable := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
-    otherType := ObjectStoreTestObject clone
+    otherType := LineItem clone
     otherType type := "FakeType"
 
     objStore save(otherType)
@@ -60,59 +56,59 @@ UnitTest clone do (
   testFindingAnObjectTwiceByIdReturnsTheSameInstance := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore save(obj)
 
     # reinitialize the object store to get a fresh state
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    assertEquals(objStore objectStoreTestObject(obj id) uniqueId, 
-                 objStore objectStoreTestObject(obj id) uniqueId)
+    assertEquals(objStore lineItem(obj id) uniqueId, 
+                 objStore lineItem(obj id) uniqueId)
   )
 
   testFindingAnObjectListTwiceReturnsTheSameInstances := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore save(obj)
 
     # reinitialize the object store to get a fresh state
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    assertEquals(objStore objectStoreTestObjects map(uniqueId), 
-                 objStore objectStoreTestObjects map(uniqueId))
+    assertEquals(objStore lineItems map(uniqueId), 
+                 objStore lineItems map(uniqueId))
   )
 
   testObjectsReturnedByObjectStoreAreCollectedWhenNoReferencesRemain := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore save(obj)
 
     # reinitialize the object store to get a fresh state
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
-    oldUniqueId := objStore objectStoreTestObject(obj id) uniqueId
+    oldUniqueId := objStore lineItem(obj id) uniqueId
 
     Collector collect
-    assertNotEquals(oldUniqueId, objStore objectStoreTestObject(obj id) uniqueId)
+    assertNotEquals(oldUniqueId, objStore lineItem(obj id) uniqueId)
   )
 
   testFindingASavedObjectReturnsTheSavedObjectInstance := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    obj := ObjectStoreTestObject clone setSomeField("value")
+    obj := LineItem clone setName("value")
     objStore save(obj)
 
-    assertEquals(obj uniqueId, objStore objectStoreTestObject(obj id) uniqueId)
+    assertEquals(obj uniqueId, objStore lineItem(obj id) uniqueId)
   )
 
   testObjectListsCanBeFoundWithEquality := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
 
-    objStore save(ObjectStoreTestObject clone setSomeField("foo"))
-    objStore save(ObjectStoreTestObject clone setSomeField("bar"))
+    objStore save(LineItem clone setName("foo"))
+    objStore save(LineItem clone setName("bar"))
 
     assertEquals(list("foo"), 
-                 objStore objectStoreTestObjects("someField = 'foo'") map(someField))
+                 objStore lineItems("name = 'foo'") map(name))
   )
 )

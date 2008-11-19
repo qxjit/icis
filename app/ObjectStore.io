@@ -24,11 +24,11 @@ ObjectStore := Object clone do (
   )
 
   save := method(object, 
-    db open
     inflector := inflectorProto with(object type)
     tableName := inflector tableName
     columns := object savedSlots join(",")
 
+    db open
     db exec("""create table if not exists #{tableName} 
                 (id integer primary key not null, 
                 #{columns})""" interpolate)

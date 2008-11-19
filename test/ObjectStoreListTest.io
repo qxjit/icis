@@ -1,33 +1,24 @@
 Lobby doRelativeFile("TestHelper.io")
 
-ObjectStoreListTestObject := Object clone do (
-  newSlot("someField"); savedSlots := list("someField")
-  != := method(other, id != other ifNonNilEval(id)) # for assertEquals
-)
-
 UnitTest clone do (
   testListLoadsObjectsFromObjectStoreMatchingConditions := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
-    objStore save(ObjectStoreListTestObject clone setSomeField("foo"))
-    objStore save(ObjectStoreListTestObject clone setSomeField("bar"))
+    objStore save(LineItem clone setName("foo"))
+    objStore save(LineItem clone setName("bar"))
 
-    objStoreList := ObjectStoreList with(objStore, 
-                                         ObjectStoreListTestObject,
-                                         "someField = 'foo'")
+    objStoreList := ObjectStoreList with(objStore, LineItem, "name = 'foo'")
 
     assertEquals(1, objStoreList size)
-    assertEquals("foo", objStoreList first someField)
+    assertEquals("foo", objStoreList first name)
   )
 
   testListDelegatesCommonListMethodsToRawList := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
-    objStore save(ObjectStoreListTestObject clone setSomeField("foo"))
-    objStore save(ObjectStoreListTestObject clone setSomeField("bar"))
+    objStore save(LineItem clone setName("foo"))
+    objStore save(LineItem clone setName("bar"))
 
-    realList := objStore objectStoreListTestObjects
-    objStoreList := ObjectStoreList with(objStore, 
-                                         ObjectStoreListTestObject,
-                                         "1 = 1")
+    realList := objStore lineItems
+    objStoreList := ObjectStoreList with(objStore, LineItem, "1 = 1")
 
     assertEquals(realList first, objStoreList first)
     assertEquals(realList second, objStoreList second)
@@ -43,23 +34,23 @@ UnitTest clone do (
     assertEquals(realList containsAny(realList), 
                  objStoreList containsAny(realList))
 
-    assertEquals(realList foreach(someField), objStoreList foreach(someField))
+    assertEquals(realList foreach(name), objStoreList foreach(name))
     assertEquals(realList indexOf(realList first), 
                  objStoreList indexOf(realList first))
 
     assertEquals(realList isEmpty, objStoreList isEmpty)
     assertEquals(realList isNotEmpty, objStoreList isNotEmpty)
     assertEquals(realList last, objStoreList last)
-    assertEquals(realList map(someField), objStoreList map(someField))
-    assertEquals(realList detect(c, c someField == "foo"), 
-                 objStoreList detect(c, c someField == "foo"))
+    assertEquals(realList map(name), objStoreList map(name))
+    assertEquals(realList detect(i, i name == "foo"), 
+                 objStoreList detect(i, i name == "foo"))
 
-    assertEquals(realList select(c, c someField == "foo"), 
-                 objStoreList select(c, c someField == "foo"))
+    assertEquals(realList select(i, i name == "foo"), 
+                 objStoreList select(i, i name == "foo"))
 
     assertEquals(realList size, objStoreList size)
     assertEquals(realList slice(1), objStoreList slice(1))
-    assertEquals(realList sortBy(block(c, c someField)), 
-                 objStoreList sortBy(block(c, c someField)))
+    assertEquals(realList sortBy(block(i, i name)), 
+                 objStoreList sortBy(block(i, i name)))
   )
 )
