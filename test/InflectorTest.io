@@ -27,4 +27,9 @@ UnitTest clone do (
     assertEquals("shoppingCart", inflector singleItemQueryName)
     assertEquals("ShoppingCart", inflector typeName)
   )
+
+  testCacheKeyForAnIdIsTypeNameColonId := method(
+    assertEquals("ShoppingCart:10", 
+                 Inflector with("ShoppingCart") cacheKey(10))
+  )
 )

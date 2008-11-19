@@ -10,4 +10,5 @@ Inflector := Object clone do (
   multipleItemQueryName := method(tableName)
   singleItemQueryName := method(source)
   typeName := method(source asCapitalized)
+  cacheKey := method(id, typeName .. ":" .. id asString)
 )

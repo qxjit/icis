@@ -53,4 +53,53 @@ UnitTest clone do (
 
     assertRaisesException(objStore fakeTypes)
   )
+
+  testFindingAnObjectTwiceByIdReturnsTheSameInstance := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    obj := ObjectStoreTestObject clone setSomeField("value")
+    objStore save(obj)
+
+    # reinitialize the object store to get a fresh state
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    assertEquals(objStore objectStoreTestObject(obj id) uniqueId, 
+                 objStore objectStoreTestObject(obj id) uniqueId)
+  )
+
+  testFindingAnObjectListTwiceReturnsTheSameInstances := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    obj := ObjectStoreTestObject clone setSomeField("value")
+    objStore save(obj)
+
+    # reinitialize the object store to get a fresh state
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    assertEquals(objStore objectStoreTestObjects map(uniqueId), 
+                 objStore objectStoreTestObjects map(uniqueId))
+  )
+
+  testObjectsReturnedByObjectStoreAreCollectedWhenNoReferencesRemain := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    obj := ObjectStoreTestObject clone setSomeField("value")
+    objStore save(obj)
+
+    # reinitialize the object store to get a fresh state
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    oldUniqueId := objStore objectStoreTestObject(obj id) uniqueId
+
+    Collector collect
+    assertNotEquals(oldUniqueId, objStore objectStoreTestObject(obj id) uniqueId)
+  )
+
+  testFindingASavedObjectReturnsTheSavedObjectInstance := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+
+    obj := ObjectStoreTestObject clone setSomeField("value")
+    objStore save(obj)
+
+    assertEquals(obj uniqueId, objStore objectStoreTestObject(obj id) uniqueId)
+  )
 )

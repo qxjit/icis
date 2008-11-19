@@ -8,9 +8,25 @@ ObjectStore := Object clone do (
     SQLite3 clone setPath(path)
   )
 
+  init := method(
+    resend
+    self objectCache := Map clone
+  )
+
+  getCachedObject := method(cacheKey,
+    if(self objectCache hasKey(cacheKey),
+       objectCache at(cacheKey) link
+    )
+  )
+
+  putObjectInCache := method(cacheKey, object,
+    objectCache atPut(cacheKey, WeakLink clone setLink(object))
+  )
+
   save := method(object, 
     db open
-    tableName := inflectorProto with(object type) tableName
+    inflector := inflectorProto with(object type)
+    tableName := inflector tableName
     columns := object savedSlots join(",")
 
     db exec("""create table if not exists #{tableName} 
@@ -24,6 +40,8 @@ ObjectStore := Object clone do (
 
     object id := db lastInsertRowId asString
     db close
+
+    putObjectInCache(inflector cacheKey(object id), object)
   )
 
   forward := method(
@@ -41,6 +59,13 @@ ObjectStore := Object clone do (
     objects := rows map(row,
       obj := Lobby doString(inflector typeName) clone
       row foreach(name, value, obj setSlot(name, value))
+
+      if(cachedObject := getCachedObject(inflector cacheKey(obj id)),
+        obj = cachedObject
+      ,
+        putObjectInCache(inflector cacheKey(obj id), obj)
+      )
+
       obj
     )
 
