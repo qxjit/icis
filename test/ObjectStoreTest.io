@@ -111,4 +111,16 @@ UnitTest clone do (
     assertEquals(list("foo"), 
                  objStore lineItems("name = 'foo'") map(name))
   )
+
+  testReturnsEmptyListForTablesThatDoNotExist := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    assertEquals(list(), objStore fakeThings)
+  )
+
+  testCanStoreAnObjectThatHasNoFields := method(
+    assertTrue(Order savedSlots isEmpty)
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    objStore save(order := Order clone)
+    assertEquals(order id, objStore order(order id) id)
+  )
 )

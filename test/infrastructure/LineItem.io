@@ -1,6 +1,7 @@
 LineItem := Object clone do (
   newSlot("name"); 
-  savedSlots := list("name")
-  == := method(other, id == other ifNonNilEval(id)) 
-  != := method(other, id != other ifNonNilEval(id)) # for assertEquals
+  newSlot("orderId");
+  savedSlots := list("name", "orderId")
+  == := method(other, id == other ?id) 
+  != := method(other, id != other ?id) # for assertEquals
 )

@@ -8,6 +8,7 @@ UnitTest clone do (
     assertEquals("shoppingCarts", inflector multipleItemQueryName)
     assertEquals("shoppingCart", inflector singleItemQueryName)
     assertEquals("ShoppingCart", inflector typeName)
+    assertEquals("shoppingCartId", inflector foreignKeyName)
   )
 
   testInflectionsBasedOnSingleItemQueryName := method(
@@ -17,6 +18,7 @@ UnitTest clone do (
     assertEquals("shoppingCarts", inflector multipleItemQueryName)
     assertEquals("shoppingCart", inflector singleItemQueryName)
     assertEquals("ShoppingCart", inflector typeName)
+    assertEquals("shoppingCartId", inflector foreignKeyName)
   )
 
   testInflectionsBasedOnTypeName := method(
@@ -26,6 +28,7 @@ UnitTest clone do (
     assertEquals("shoppingCarts", inflector multipleItemQueryName)
     assertEquals("shoppingCart", inflector singleItemQueryName)
     assertEquals("ShoppingCart", inflector typeName)
+    assertEquals("shoppingCartId", inflector foreignKeyName)
   )
 
   testCacheKeyForAnIdIsTypeNameColonId := method(

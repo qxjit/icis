@@ -1,11 +1,11 @@
 ObjectStore := Object clone do (
   # preload so we don't run into a loop trying to load it from the forward 
-  SQLite3 
+  SQLite3Adapter
   newSlot("path")
   inflectorProto := Inflector
   lazySlot("db", 
     Directory with(path pathComponent) createIfAbsent
-    SQLite3 clone setPath(path)
+    SQLite3Adapter clone setPath(path)
   )
 
   init := method(
@@ -30,13 +30,15 @@ ObjectStore := Object clone do (
 
     db open
     db exec("""create table if not exists #{tableName} 
-                (id integer primary key not null, 
+                (id integer primary key not null
+                #{if(columns isZero, "", ",")} 
                 #{columns})""" interpolate)
 
     values := object savedSlots map(c, "'#{object getSlot(c)}'" interpolate) join(",")
 
-    db exec("""insert into #{tableName} (#{columns})
-               values (#{values})""" interpolate)
+    db exec("""insert into #{tableName} 
+               (id #{if(columns isZero, "", ",")} #{columns})
+               values (null #{if(columns isZero, "", ",")} #{values})""" interpolate)
 
     object id := db lastInsertRowId asString
     db close
@@ -46,6 +48,8 @@ ObjectStore := Object clone do (
 
   forward := method(
     inflector := inflectorProto with(call message name)
+    inflector tableName in(db tableNames) ifFalse(return list())
+
     sql := "select * from #{inflector tableName}"
 
     if (singleItem := (inflector singleItemQueryName == call message name),
@@ -64,6 +68,14 @@ ObjectStore := Object clone do (
       ,
         obj := Lobby doString(inflector typeName) clone
         row foreach(name, value, obj setSlot(name, value))
+        if (obj hasSlot("associations"),
+          obj associations foreach(association,
+            obj setSlot(association, doString(
+              """#{association}("#{inflector foreignKeyName} = '#{obj id}'")""" interpolate
+              )
+            )
+          )
+        )
         putObjectInCache(inflector cacheKey(obj id), obj)
         obj
       )
