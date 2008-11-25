@@ -1,11 +1,9 @@
 ObjectStore := Object clone do (
-  # preload so we don't run into a loop trying to load it from the forward 
-  SQLite3Adapter
   newSlot("path")
   inflectorProto := Inflector
   lazySlot("db", 
     Directory with(path pathComponent) createIfAbsent
-    SQLite3Adapter clone setPath(path)
+    Lobby SQLite3Adapter clone setPath(path)
   )
 
   init := method(
@@ -70,10 +68,13 @@ ObjectStore := Object clone do (
         row foreach(name, value, obj setSlot(name, value))
         if (obj hasSlot("associations"),
           obj associations foreach(association,
-            obj setSlot(association, doString(
-              """#{association}("#{inflector foreignKeyName} = '#{obj id}'")""" interpolate
-              )
+            assocProto := Lobby doString(
+              inflectorProto with(association) typeName
             )
+
+            lazyList := Lobby ObjectStoreList with(self, assocProto,
+              """#{inflector foreignKeyName} = '#{obj id}'""" interpolate)
+            obj setSlot(association, lazyList)
           )
         )
         putObjectInCache(inflector cacheKey(obj id), obj)

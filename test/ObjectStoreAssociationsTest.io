@@ -18,4 +18,18 @@ UnitTest clone do (
     assertEquals(list(item2a id, item2b id), 
                  objStore order(order2 id) lineItems map(id))
   ) 
+
+  testAssociationFindsAreLazilyLoaded := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    objStore save(order1 := Order clone)
+    objStore save(item1a := LineItem clone setOrderId(order1 id))
+
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    dbExecCalls := CallCounter with(objStore db, "exec")
+
+    loadedOrder := objStore order(order1 id) 
+    assertEquals(1, dbExecCalls callCount)
+    loadedOrder lineItems map(id)
+    assertEquals(2, dbExecCalls callCount)
+  )
 )
