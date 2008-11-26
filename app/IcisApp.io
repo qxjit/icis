@@ -1,6 +1,7 @@
 IcisApp := Object clone do (
   newSlot("projectDirectory", AppDirectory parentDirectory directoryNamed("projects"))
-  lazySlot("objStore",
+
+  objStore := method( 
     ObjectStore clone setPath(projectDirectory fileNamed("projects.sqlite") path)
   )
 

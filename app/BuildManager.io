@@ -3,9 +3,13 @@ BuildManager := Object clone do (
   newSlot("buildProcessProto", BuildProcess)
 
   updateProcesses := method(
+    objStore := application objStore
     projects := objStore projects
     projects select(builds isEmpty) foreach(project,
-      buildProcessProto clone setCommand(project buildCommand) start
+      buildProcess := buildProcessProto clone 
+      buildProcess setProject(project) \
+                   setProjectDirectory(application projectDirectory) 
+      buildProcess start
       objStore save(project newBuild markAsRunning)
     )
   )
@@ -14,6 +18,4 @@ BuildManager := Object clone do (
     wait(1)
     updateProcesses
   ))
-
-  objStore := method(application objStore)
 )

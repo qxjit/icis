@@ -1,6 +1,6 @@
 Project := StoredObject clone do (
   storedFields("name", "url", "buildCommand")
-  newSlot("gitRepositoryProto")
+  newSlot("gitRepositoryProto", GitRepository)
   associations := list("builds")
 
   newBuild := method(Build clone setProject(self))

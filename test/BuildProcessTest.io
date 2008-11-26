@@ -1,49 +1,63 @@
-Lobby doRelativeFile("TestHelper.io")
-
-
 UnitTest clone do (
-  testABuildProcessIsRunningAfterItIsStartedTransfersToNotRunningWhenFinished := method(
-    build := BuildProcess clone setCommand("sleep 0.01") start
-    assertTrue(build isRunning)
+  testClonesRepositoryAndRunsBuildCommandInProjectDirectory := method(
+    masterRepo := GitRepository at(TempDirectory testDir directoryNamed("master"))
+    masterRepo gitInit
+
+    # Git doesn't like to clone without a commit
+    masterRepo gitDo(masterRepo directory, "commit", "--allow-empty", "-m", "test")
+
+    project := Project clone setUrl(masterRepo directory path) \
+                             setName("project") \
+                             setBuildCommand("touch buildWasRun")
+
+    build := BuildProcess clone setProject(project) \
+                                setProjectDirectory(TempDirectory testDir) start
+
+    assertEquals(false, build isSuccessful)
+    assertEquals(true, build isRunning)
     waitFor(build isRunning not)
-    assertFalse(build isRunning)
+    assertEquals(true, build isSuccessful)
+    assertTrue(TempDirectory testDir fileNamed("project/buildWasRun") exists)
+    
+    clonedRepo := GitRepository at(TempDirectory testDir directoryNamed("project"))
+    assertEquals(clonedRepo originUrl, masterRepo directory path)
   )
 
-  testBuildProcessIsSuccessfulWhenCommandSucceeds := method(
-    build := BuildProcess clone setCommand("sleep 0") start
-    assertFalse(build isSuccessful)
+  testBuildProcessIsNotSuccessfulIfGitCloneFails := method(
+    TempDirectory testDir create
+
+    project := Project clone setUrl(TempDirectory testDir directoryNamed("master")) \
+                             setName("project") \
+                             setBuildCommand("touch buildWasRun")
+
+    build := BuildProcess clone setProject(project) \
+                                setProjectDirectory(TempDirectory testDir) start
+
     waitFor(build isRunning not)
-    assertTrue(build isSuccessful)
+    assertEquals(false, build isSuccessful)
   )
 
-  testBuildProcessIsNotSuccessfulWhenCommandFails := method(
-    build := BuildProcess clone setCommand("test -f bogus") start
-    assertFalse(build isSuccessful)
-    waitFor(build isRunning not)
-    assertFalse(build isSuccessful)
-  )
+  testBuildProcessIsNotSuccessfulIfBuildCommandFails := method(
+    masterRepo := GitRepository at(TempDirectory testDir directoryNamed("master"))
+    masterRepo gitInit
 
-  testBuildProcessIsNotSuccessfulIfCommandIsNil := method(
-    build := BuildProcess clone setCommand(nil) start
-    assertFalse(build isSuccessful)
-    waitFor(build isRunning not)
-    assertFalse(build isSuccessful)
-  )
+    # Git doesn't like to clone without a commit
+    masterRepo gitDo(masterRepo directory, "commit", "--allow-empty", "-m", "test")
 
-  testBuildProcessCollectsOutputFromRun := method(
-    build := BuildProcess clone setCommand("echo hello") start
-    waitFor(build isRunning not)
-    assertEquals("hello\n", build output)
-  )
+    project := Project clone setUrl(masterRepo directory path) \
+                             setName("project") \
+                             setBuildCommand("test -f bogus")
 
-  testBuildProcessRunsInRequestedDirectory := method(
-    build := BuildProcess clone setDirectory(TempDirectory) setCommand("pwd") start
+    build := BuildProcess clone setProject(project) \
+                                setProjectDirectory(TempDirectory testDir) start
+
     waitFor(build isRunning not)
-    assertEquals(TempDirectory path .. "\n", build output)
+    assertEquals(false, build isSuccessful)
   )
 
   waitFor := method(
     startTime := Date now
     while(startTime secondsSinceNow < 1 and call evalArgAt(0) not, yield)
   )
+
 )

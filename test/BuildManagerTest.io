@@ -4,7 +4,8 @@ IcisAppTest clone do (
   FakeBuildProcess := Object clone do (
     instances := list
 
-    newSlot("command", nil)
+    newSlot("project", nil)
+    newSlot("projectDirectory", nil)
     newSlot("isRunning", false)
 
     init := method(instances append(self))
@@ -19,12 +20,14 @@ IcisAppTest clone do (
   )
 
   testBuildManagerStartsBuildProcessesForAnyProjectsWithoutABuild := method (
-    objStore save(Project clone setBuildCommand("doit"))
+    objStore save(project := Project clone setBuildCommand("doit"))
 
     manager updateProcesses
 
     assertEquals(1, FakeBuildProcess instances size)
-    assertEquals("doit", FakeBuildProcess instances first command)
+    assertEquals(project id, FakeBuildProcess instances first project id)
+    assertEquals(manager application projectDirectory,
+                 FakeBuildProcess instances first projectDirectory)
     assertTrue(FakeBuildProcess instances first isRunning)
   )
 

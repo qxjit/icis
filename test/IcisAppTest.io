@@ -6,4 +6,5 @@ UnitTest clone do (
     app setProjectDirectory(Directory with("/some/dir"))
     assertEquals("/some/dir/projects.sqlite", app objStore path)
   )
+
 )

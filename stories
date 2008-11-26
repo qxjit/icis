@@ -8,7 +8,7 @@ x * Configure a build task
   * Edit an existing project
 
 Git Support
-  * Clone repository on add
+x * Clone repository on add
   * Delete repository on remove
   * Check for changes and pull
 

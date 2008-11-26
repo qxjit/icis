@@ -26,9 +26,13 @@ GitRepository := Object clone do (
     gitCommand := arguments removeFirst
     argumentsString := arguments map(s, "'" .. s .. "'") join(" ")
 
-    command := "cd '#{directory path}' && git #{gitCommand} #{argumentsString} > /dev/null 2>&1" interpolate
+    command := "git #{gitCommand} #{argumentsString}" interpolate
     logCommand(command)
-    (System system(command) == 0) ifFalse(Exception raise(command .. " failed"))
+
+    proc := ShellProcess clone setDirectory(directory) setCommand(command) 
+    (proc start whenDone isSuccessful ifFalse(
+      Exception raise(command .. " failed in " .. directory path)
+    ))
 
     self
   )
