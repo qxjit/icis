@@ -39,6 +39,7 @@ ObjectStore := Object clone do (
                values (null #{if(columns isZero, "", ",")} #{values})""" interpolate)
 
     object id := db lastInsertRowId asString
+    initializeAssociations(object)
     db close
 
     putObjectInCache(inflector cacheKey(object id), object)
@@ -66,22 +67,28 @@ ObjectStore := Object clone do (
       ,
         obj := Lobby doString(inflector typeName) clone
         row foreach(name, value, obj setSlot(name, value))
-        if (obj hasSlot("associations"),
-          obj associations foreach(association,
-            assocProto := Lobby doString(
-              inflectorProto with(association) typeName
-            )
-
-            lazyList := Lobby ObjectStoreList with(self, assocProto,
-              """#{inflector foreignKeyName} = '#{obj id}'""" interpolate)
-            obj setSlot(association, lazyList)
-          )
-        )
+        initializeAssociations(obj)
         putObjectInCache(inflector cacheKey(obj id), obj)
         obj
       )
     )
 
     if (singleItem, objects first, objects)
+  )
+
+  initializeAssociations := method(obj,
+    inflector := Inflector with(obj type)
+
+    if (obj hasSlot("associations"),
+      obj associations foreach(association,
+        assocProto := Lobby doString(
+          inflectorProto with(association) typeName
+        )
+
+        lazyList := Lobby ObjectStoreList with(self, assocProto,
+          """#{inflector foreignKeyName} = '#{obj id}'""" interpolate)
+        obj setSlot(association, lazyList)
+      )
+    )
   )
 )

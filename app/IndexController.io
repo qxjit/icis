@@ -4,7 +4,4 @@ IndexController := Controller clone do (
   )
 
   projects := method(objStore projects)
-  buildsFor := method(project, 
-    objStore builds select(b, b projectId == project id)
-  )
 )

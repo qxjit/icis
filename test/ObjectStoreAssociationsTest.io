@@ -21,15 +21,23 @@ UnitTest clone do (
 
   testAssociationFindsAreLazilyLoaded := method(
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
-    objStore save(order1 := Order clone)
-    objStore save(item1a := LineItem clone setOrderId(order1 id))
+    objStore save(order := Order clone)
+    objStore save(LineItem clone setOrderId(order id))
 
     objStore := ObjectStore clone setPath(TempDirectory testFile path)
     dbExecCalls := CallCounter with(objStore db, "exec")
 
-    loadedOrder := objStore order(order1 id) 
+    loadedOrder := objStore order(order id) 
     assertEquals(1, dbExecCalls callCount)
     loadedOrder lineItems map(id)
     assertEquals(2, dbExecCalls callCount)
+  )
+
+  testAssociationsAreAvailableOnObjectsJustSaved := method(
+    objStore := ObjectStore clone setPath(TempDirectory testFile path)
+    objStore save(order := Order clone)
+    objStore save(LineItem clone setOrderId(order id))
+
+    assertEquals(1, order lineItems size)
   )
 )
