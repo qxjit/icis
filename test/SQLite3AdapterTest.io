@@ -16,4 +16,27 @@ UnitTest clone do (
     adapter close
     e pass
   )
+
+  testCallingOpenMoreThanOnceDoesntLeakFileHandles := method (
+    adapter := SQLite3Adapter close setPath(TempDirectory testFile path)
+
+    adapter open
+    adapter open
+    adapter close
+
+    proc := ShellProcess clone setCommand("lsof | grep #{adapter path} | wc -l" interpolate)
+    proc run
+    assertEquals(0, proc output strip asNumber)
+  )
+
+  testOpenReturnsSelf := method (
+    adapter := SQLite3Adapter close setPath(TempDirectory testFile path)
+
+    e := try (
+      assertEquals(adapter, adapter open)
+      assertEquals(adapter, adapter open)
+    )
+    adapter close
+    e pass
+  )
 )
