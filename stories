@@ -23,3 +23,7 @@ x * Run project build task immediately after add
 Infrastructure
   * Return error 400 for bad url
   * Return error 500 if there is an error
+
+Cleanup
+  * Fix SQLite3 file handle leak in addon rather than adapter
+  * Look into future proxy turning integers into strings
